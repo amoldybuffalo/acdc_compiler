@@ -67,13 +67,20 @@ class Tokenizer:
                     char = self.cs.read()
                 if char.isalpha():
                     if char not in VALID_VARS:
-                        raise ValueError(f"Invalid variable character: {char}")
+                        raise ValueError(f"Invalid variable character: '{char}'")
                     else:
-                        raise NotImplementedError
+                        return Token(TokenType.INTDEC, lexeme=f"i{char}", name=f"{char}")
            
 
             case 'p':
-                raise NotImplementedError
+                char = self.cs.read()
+                while char in {' ', '\n', '\r', '\t'}:
+                    char = self.cs.read()
+                if char.isalpha():
+                    if char not in VALID_VARS:
+                        raise ValueError(f"Invalid variable character: '{char}'")
+                    else:
+                        return Token(TokenType.PRINT, lexeme=f"p{char}", name=f"{char}")
             
             case _:
                 pass # Move on to secondary inspection to handle digits, vars, error case
@@ -85,9 +92,9 @@ class Tokenizer:
 
         if char.isalpha():
             if char not in VALID_VARS:
-                raise ValueError(f"Invalid variable character: {char}")
+                raise ValueError(f"Invalid variable character: '{char}'")
             else:
-                raise NotImplementedError
+                return Token(TokenType.VARREF, lexeme=f"{char}")
            
         raise ValueError(f"Unexpected character: {char!r}")
         
@@ -97,11 +104,11 @@ class Tokenizer:
         
         digits: list[str] = []
         digits.append(firstchar)
-        #if CONDITION:
-        #    raise ValueError("Integer literal cannot have a leading zero")
+        if firstchar == '0' and self.cs.peek().isdigit():
+            raise ValueError("Integer literal cannot have a leading zero")
 
-        #while not self.cs.eof() and SOMETHING:
-        #    digits.append(SOMETHING)
+        while not self.cs.eof() and self.cs.peek().isdigit():
+            digits.append(self.cs.read())
 
         lexeme = ''.join(digits)
 
