@@ -1,0 +1,12 @@
+i x
+i y
+i a
+i b
+i e
+x = 1
+y = 1
+a = (x + y)^2
+b = (x^2 + 2*x*y + y^2)
+e = a - b
+p e
+
