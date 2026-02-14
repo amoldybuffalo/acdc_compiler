@@ -88,11 +88,14 @@ def parse_expression(ts: TokenStream) -> ASTNode:
             continue
 
         if tok.tokentype == TokenType.VARREF:
-            raise NotImplementedError
+            tok = ts.read()
+            valstack.append(VarRefNode(tok.lexeme))
+            continue
 
         if tok.tokentype == TokenType.LPAREN:
-            # Push tok to operator stack and continue
-            raise NotImplementedError
+            tok = ts.read()
+            opstack.push(tok)
+            continue
 
         if tok.tokentype == TokenType.RPAREN:
             ts.read()  # consume RPAREN
@@ -115,10 +118,10 @@ def parse_expression(ts: TokenStream) -> ASTNode:
                 top_prec = precedence[top.tokentype]
                 inc_prec = precedence[incoming.tokentype]
 
-                # if CHECK OPERATOR PRECDENCE and ASSOCIATIVITY:
-                #   reduce(opstack, valstack)
-                # else
-                #    break
+                if top_prec > inc_prec and True: #remember to do associativity
+                  reduce(opstack, valstack)
+                else:
+                   break
 
 
             opstack.append(incoming)
@@ -131,6 +134,10 @@ def parse_expression(ts: TokenStream) -> ASTNode:
         # Check to see if last element on opstack is LPAREN
         # If so, we have an issue, raise error
         # Otherwise, we can reduce
+        if opstack[-1].tokentype == TokenType.LPAREN:
+            raise ParseError("")
+        else:
+            reduce(opstack, valstack)
         raise NotImplementedError
 
     if len(valstack) != 1:
@@ -150,7 +157,17 @@ def reduce(opstack: list, valstack: list) -> None:
     # And pop operator from opstack
     # Then combine them to produce a new AST node
     # Finally, push back onto valstack
+    if opstack[-1] != None and valstack[-1] != None and valstack[-2] != None:
+        op = opstack.pop()
+        val1 = valstack.pop()
+        val2 = valstack.pop()
+        b = BinOpNode(op, val1, val2)
+        valstack.append(b)
+    
 
+    else:
+        print("Error in Reduce!!")
+        raise ParseError("Improperly Formatted Arithmetic Expression!")
 
 def expect(ts: TokenStream, expectedtype: TokenType) -> Token:
     # Peek at next token
@@ -159,5 +176,8 @@ def expect(ts: TokenStream, expectedtype: TokenType) -> Token:
     # Return the token
     # Otherwise, raise error
     tok = ts.peek()
-    # Put stuff here
+    if tok.tokentype == expectedtype:
+        tok = ts.read()
+    else:
+        raise ParseError(f"Expected {expectedtype} but got {tok.tokentype}")
     return tok

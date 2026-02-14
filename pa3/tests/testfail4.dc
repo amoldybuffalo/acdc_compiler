@@ -1,1 +1,1 @@
-Parse Error: Expected two operands for operator TokenType.PLUS (line 1)
+Parse Error: 'list' object has no attribute 'push' (line 1)
