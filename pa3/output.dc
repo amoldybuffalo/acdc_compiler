@@ -1,1 +1,6 @@
-Parse Error:  (line 1)
+Assign(varname='d')
+   └─ BinOp(op=PLUS)
+      ├─ VarRef(varname='a')
+      └─ BinOp(op=PLUS)
+         ├─ VarRef(varname='b')
+         └─ VarRef(varname='c')
