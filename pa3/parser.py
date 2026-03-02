@@ -161,6 +161,7 @@ def reduce(opstack: list, valstack: list) -> None:
         if len(valstack) >= 2:
             rhs = valstack.pop()
             lhs = valstack.pop()
+            print(f"RHS is {rhs} and LHS is {lhs}")
             b = BinOpNode(op.tokentype, lhs, rhs)
             valstack.append(b)
     
